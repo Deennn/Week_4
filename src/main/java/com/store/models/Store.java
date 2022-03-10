@@ -5,6 +5,9 @@ package com.store.models;
 import com.store.customLinkedList.CustomPriorityQueue;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 public class Store {
@@ -16,6 +19,8 @@ public class Store {
     private List<Staff> staffs;
     private List<Applicant> applicants;
     private Product[] productList = new Product[1];
+    private ReadWriteLock lock  = new ReentrantReadWriteLock();
+    private Lock writeLOck = lock.writeLock();
 
     public Store(String name, String address , Staff manager) {
         this.name = name;
@@ -53,6 +58,7 @@ public class Store {
 
 
     public Product[] getProductList() {
+
         return productList;
     }
 
@@ -60,6 +66,9 @@ public class Store {
         this.productList = productList;
     }
 
+    public Lock getWriteLOck() {
+        return writeLOck;
+    }
 //    public PriorityQueue<Customer> getCustomerPriorityQueue() {
 //        return customerPriorityQueue;
 //    }

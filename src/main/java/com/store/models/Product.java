@@ -2,6 +2,7 @@ package com.store.models;
 
 
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -12,7 +13,8 @@ public class Product {
     private Category category;
     private String productId;
     private double productPrice;
-    private int productQuantity;
+    private AtomicInteger productQuantity;
+//    private int  productQuantity;
 
 
 
@@ -22,7 +24,8 @@ public class Product {
         this.productName = productName;
         this.productDescription = productDescription;
         this.category = category;
-        this.productQuantity = productQuantity;
+        this.productQuantity = new AtomicInteger(productQuantity);
+//        this.productQuantity = productQuantity;
         this.productPrice = productPrice;
         if (productName.length() <= 1) {
             this.productId  = productName.substring(0) + productIdTracker;
@@ -81,12 +84,21 @@ public class Product {
 //                "productName='" + productName + '\'' +
 
     public int getProductQuantity() {
-        return productQuantity;
+        return productQuantity.get();
     }
 
     public void setProductQuantity(int productQuantity) {
-        this.productQuantity = productQuantity;
+        this.productQuantity.set(productQuantity);
     }
+
+
+//    public int getProductQuantity() {
+//        return productQuantity;
+//    }
+//
+//    public void setProductQuantity(int productQuantity) {
+//        this.productQuantity = productQuantity;
+//    }
 //                ", productDescription='" + productDescription + '\'' +
 //                ", category=" + category +
 //                ", productId='" + productId + '\'' +

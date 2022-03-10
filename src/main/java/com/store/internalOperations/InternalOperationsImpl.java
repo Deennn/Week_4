@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -62,7 +63,7 @@ private double customerPrice = 0;
 
     @Override
     public void sellToCustomerInQueue(CustomPriorityQueue customPriorityQueue, Staff staff, Store store) throws StaffNotAuthorizedException, InsufficientFundException {
-        ExecutorService es  = Executors.newFixedThreadPool(4);
+        ExecutorService es  = Executors.newFixedThreadPool(6);
         while (!customPriorityQueue.empty()) {
             var name = customPriorityQueue.peek();
             String newProduct = name.getCartMap().keySet().stream().toList().get(0).getProductName();
@@ -70,15 +71,37 @@ private double customerPrice = 0;
             var each = customPriorityQueue.poll();
 //            sellProducts(staff,store,each);
                 es.execute(() -> {
+//                    try {
+//                        Thread.sleep(500);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+
                     try {
-                        sellProducts(staff,store,each);
+//                            store.getWriteLOck().lock();
+                           sellProducts(staff,store,each);
+
                     } catch (InsufficientFundException | StaffNotAuthorizedException | ProductOutOfStockException e) {
                         e.printStackTrace();
+                    } finally {
+////                        store.getWriteLOck().unlock();
+//                        System.out.println(Thread.currentThread().getName()+ " " + name.getFirstName()
+//                                + store.getProductList()[0].getProductName() + " : " +store.getProductList()[0].getProductQuantity());
+                        System.out.println(Thread.currentThread().getName()+ " " + name.getFirstName()
+                                + store.getProductList()[1].getProductName() + " : " +store.getProductList()[1].getProductQuantity());
+
                     }
                 });
 
        }
-        es.shutdown();
+        try {
+//            Thread.sleep(1000);
+           if(es.awaitTermination(2, TimeUnit.SECONDS))
+               es.shutdown();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -107,7 +130,7 @@ private double customerPrice = 0;
                 customer.getAccount().setAccountBalance(customerBalance);
                 double originalAccountBalance = store.getStoreAccount().getAccountBalance();
                 store.getStoreAccount().setAccountBalance(totalAmount+originalAccountBalance);
-//                System.out.println(printReceipt(store,customer,totalAmount));
+                System.out.println(printReceipt(store,customer,totalAmount));
                 removeBoughtProducts(customer.getCartMap(),store.getProductList());
 
         }
@@ -115,7 +138,7 @@ private double customerPrice = 0;
 
     }
 
-    private void removeBoughtProducts(Map<Product,Integer> customerProductMap,Product[] products) throws ProductOutOfStockException {
+    private synchronized void removeBoughtProducts(Map<Product,Integer> customerProductMap,Product[] products) throws ProductOutOfStockException {
         for (Map.Entry<Product, Integer> productsPairsBoughtByCustomer : customerProductMap.entrySet()) {
             String nameOfItem =  customerProductMap.keySet().stream().toList().get(0).getProductName();
             int itemUnit = customerProductMap.values().stream().toList().get(0);
@@ -129,7 +152,7 @@ private double customerPrice = 0;
             for (Product productInStore : products) {
                 if (productInStore.getProductName().equals(nameOfItem)) {
 //                    System.out.println("store " + productInStore.getProductQuantity() + " cart " + nameOfItem);
-                    if (productInStore.getProductQuantity()-itemUnit <= 0) {
+                    if (productInStore.getProductQuantity()-itemUnit <= -1) {
                         try {
                             throw new ProductOutOfStockException( nameOfItem+ " Out Of Stock");
 

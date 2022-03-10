@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class Main {
 
-   public static void main(java.lang.String[] args) throws StaffNotAuthorizedException, ApplicantsAlreadyAppliedException, OverStaffedException, InsufficientFundException, ProductOutOfStockException, ProductNotInStockException, IOException {
+   public static void main(java.lang.String[] args) throws StaffNotAuthorizedException, ApplicantsAlreadyAppliedException, OverStaffedException, InsufficientFundException, ProductOutOfStockException, ProductNotInStockException, IOException, InterruptedException {
         Category FoodStuff = new Category("FoodStuff");
 //        Product milk = new Product("Milk", "powder milk",FoodStuff,1000,10);
 //        Product sugar = new Product("Sugar","cube sugar",FoodStuff,10000,14);
@@ -59,7 +59,7 @@ public class Main {
 
 
 //        customerOperations.buyProduct(sam,store,"garri",5);
-        customerOperations.loadCustomerAccount(sam,100000000);
+        customerOperations.loadCustomerAccount(sam,10000000);
         customerOperations.loadCustomerAccount(wale,100000000);
         customerOperations.loadCustomerAccount(akin,100000000);
         customerOperations.loadCustomerAccount(kunle,100000000);
@@ -74,23 +74,32 @@ public class Main {
         //5A -> 7A -> 12A -> 4B -> 10B
         System.out.println(store.getProductList()[0]);
         System.out.println(store.getProductList()[1]);
-
-        customerOperations.addProductToCart(sam,store,"Garri",10); //2
-        customerOperations.addProductToCart(ade,store,"Garri",4); //5 4
-        customerOperations.addProductToCart(wale,store,"Milk",6); //3
-        customerOperations.addProductToCart(akin,store,"Milk", 2); //4  3
-        customerOperations.addProductToCart(kunle,store,"Garri",3); //1
-        customerOperations.addProductToCart(sola,store,"Milk",7); //6  5
-
-
+        System.out.println(store.getStoreAccount().getAccountBalance());
+        System.out.println(sam.getAccount().getAccountBalance() + " " + sam.getAccount().getAccountName());
+        customerOperations.addProductToCart(sam,store,"Garri",1); //2
+        customerOperations.addProductToCart(sam,store,"Garri",3); //5 4
+        customerOperations.addProductToCart(wale,store,"Garri",5); //3
+        customerOperations.addProductToCart(akin,store,"Milk", 8); //4  3
+        customerOperations.addProductToCart(kunle,store,"Milk",5); //1
+        customerOperations.addProductToCart(sola,store,"Milk",2); //6  5
+       customerOperations.addProductToCart(sola,store,"Milk",2);
+//
+//
 
 
 
 
 
         internalOperations.sellToCustomerInQueue(store.getCustomerCustomPriorityQueue(),cashier,store);
+//        Thread.sleep(3000);
+        System.out.println("Just print something");
         System.out.println(store.getProductList()[0]);
         System.out.println(store.getProductList()[1]);
+//        System.out.println(store.getProductList()[2]);
+//        System.out.println(store.getProductList()[3]);
+//        System.out.println(store.getProductList()[4]);
+        System.out.println(store.getStoreAccount().getAccountBalance());
+        System.out.println(sam.getAccount().getAccountBalance() + " " + sam.getAccount().getAccountName());
 
 
 
