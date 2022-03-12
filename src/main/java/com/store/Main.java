@@ -76,13 +76,13 @@ public class Main {
         System.out.println(store.getProductList()[1]);
         System.out.println(store.getStoreAccount().getAccountBalance());
         System.out.println(sam.getAccount().getAccountBalance() + " " + sam.getAccount().getAccountName());
-        customerOperations.addProductToCart(sam,store,"Garri",1); //2
+        customerOperations.addProductToCart(ade,store,"Garri",1); //2
         customerOperations.addProductToCart(sam,store,"Garri",3); //5 4
         customerOperations.addProductToCart(wale,store,"Garri",5); //3
         customerOperations.addProductToCart(akin,store,"Milk", 8); //4  3
         customerOperations.addProductToCart(kunle,store,"Milk",5); //1
         customerOperations.addProductToCart(sola,store,"Milk",2); //6  5
-       customerOperations.addProductToCart(sola,store,"Milk",2);
+
 //
 //
 

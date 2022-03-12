@@ -75,17 +75,27 @@ class InternalOperationsImplTest {
     @Test
     void sellProducts() throws StaffNotAuthorizedException, IOException, ProductOutOfStockException, ProductNotInStockException {
         internalOperations.addProductToStore(adee,store);
-        customerOperations.addProductToCart(deenn,store,"Bread",4);
-        customerOperations.loadCustomerAccount(deenn,10.0);
-        Assertions.assertThrows(StaffNotAuthorizedException.class, ()-> internalOperations.sellToCustomerInQueue(store.getCustomerCustomPriorityQueue(), adee,store));
+        customerOperations.addProductToCart(deenn,store,"Garri",10);
+        customerOperations.addProductToCart(deenn,store,"Garri",11);
+        customerOperations.loadCustomerAccount(deenn,10000000000.0);
+        Assertions.assertThrows(ProductOutOfStockException.class, ()-> internalOperations.sellToCustomerInQueue(store.getCustomerCustomPriorityQueue(), adee,store));
+    }
+
+    @Test
+    void shouldThrowProductOutOfStockException() throws StaffNotAuthorizedException, IOException, ProductOutOfStockException, ProductNotInStockException {
+        internalOperations.addProductToStore(adee,store);
+        customerOperations.addProductToCart(deenn,store,"Garri",12);
+//        customerOperations.addProductToCart(deenn,store,"Garri",11);
+        customerOperations.loadCustomerAccount(deenn,10000000000.0);
+        Assertions.assertThrows(ProductOutOfStockException.class, ()-> internalOperations.sellToCustomerInQueue(store.getCustomerCustomPriorityQueue(), adee,store));
     }
 
     @Test
     void shouldThrowInsufficientFundException() throws StaffNotAuthorizedException, IOException, InsufficientFundException, ProductOutOfStockException, ProductNotInStockException {
         internalOperations.addProductToStore(adee,store);
         customerOperations.addProductToCart(deenn,store,"Bread",4);
-        customerOperations.loadCustomerAccount(deenn,10.0);
-        Assertions.assertEquals(10.00, deenn.getAccount().getAccountBalance());
+        customerOperations.loadCustomerAccount(deenn,1.0);
+        Assertions.assertEquals(1.00, deenn.getAccount().getAccountBalance());
         Assertions.assertThrows(InsufficientFundException.class, () -> internalOperations.sellToCustomerInQueue(store.getCustomerCustomPriorityQueue(),chisom, store));
     }
     @Test
@@ -106,6 +116,21 @@ class InternalOperationsImplTest {
 
         Assertions.assertEquals(0, deenn.getCartMap().size());
     }
+
+    @Test
+    void shouldCheckTheQuantityInStoreAfterPurchase() throws StaffNotAuthorizedException, IOException, InsufficientFundException, ProductOutOfStockException, ProductNotInStockException {
+        internalOperations.addProductToStore(adee,store);
+        customerOperations.addProductToCart(deenn,store,"Garri",7);
+        customerOperations.loadCustomerAccount(ade,100000000.0);
+        customerOperations.loadCustomerAccount(deenn,100000000.0);
+        customerOperations.addProductToCart(ade,store,"Milk",4);
+
+        internalOperations.sellToCustomerInQueue(store.getCustomerCustomPriorityQueue(), chisom,store);
+
+        Assertions.assertEquals(3, store.getProductList()[0].getProductQuantity());
+        Assertions.assertEquals(16, store.getProductList()[1].getProductQuantity());
+    }
+
     @Test
     void shouldCheckIfCustomerWalletAfterBuying() throws StaffNotAuthorizedException, IOException, InsufficientFundException, ProductOutOfStockException, ProductNotInStockException {
         internalOperations.addProductToStore(adee,store);
